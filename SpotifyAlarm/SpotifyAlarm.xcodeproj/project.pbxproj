@@ -34,6 +34,8 @@
 		A00F1BFE2593B2E6A9CA3E6C /* NightstandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8BBE34D6AAA8E170BE152F /* NightstandView.swift */; };
 		F179FDE3CCB35692A1872E2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0DE19F5ACF9C69746C35A9A /* Assets.xcassets */; };
 		CBDED0B28F1761F27F13C4F2 /* alarm_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 46292FA83C844FE75CAB29CA /* alarm_sound.wav */; };
+		7A1100223344556677889901 /* CustomAudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1100223344556677889902 /* CustomAudioService.swift */; };
+		7A2200223344556677889903 /* CustomAudioPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2200223344556677889904 /* CustomAudioPickerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,6 +67,8 @@
 		B0DE19F5ACF9C69746C35A9A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
 		46292FA83C844FE75CAB29CA /* alarm_sound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "alarm_sound.wav"; sourceTree = "<group>"; };
 		D75D233F903B14D64C448BEA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
+		7A1100223344556677889902 /* CustomAudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomAudioService.swift"; sourceTree = "<group>"; };
+		7A2200223344556677889904 /* CustomAudioPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomAudioPickerView.swift"; sourceTree = "<group>"; };
 		2EBD987849E09EFAF7E2AB55 /* SpotifyAlarm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpotifyAlarm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -129,6 +133,7 @@
 				F4159A997349D866A05D21EA /* AudioPlayerService.swift */,
 				55B639C75A604A5E8C9B7919 /* NotificationService.swift */,
 				CB9422659B2FE4374F97C4D0 /* AlarmService.swift */,
+				7A1100223344556677889902 /* CustomAudioService.swift */,
 			);
 			path = SpotifyAlarm/Services;
 			sourceTree = "<group>";
@@ -152,6 +157,7 @@
 				6C73913C609B93281926789F /* Spotify */,
 				DD7ECEB04C949C6B3B99549C /* Settings */,
 				11B14FA625B172E290C4F55B /* Nightstand */,
+				7A3300223344556677889905 /* CustomAudio */,
 			);
 			path = SpotifyAlarm/Views;
 			sourceTree = "<group>";
@@ -198,6 +204,14 @@
 				5F8BBE34D6AAA8E170BE152F /* NightstandView.swift */,
 			);
 			path = Nightstand;
+			sourceTree = "<group>";
+		};
+		7A3300223344556677889905 /* CustomAudio */ = {
+			isa = PBXGroup;
+			children = (
+				7A2200223344556677889904 /* CustomAudioPickerView.swift */,
+			);
+			path = CustomAudio;
 			sourceTree = "<group>";
 		};
 		F5264EC371987BBAC756C3C3 /* Resources */ = {
@@ -314,6 +328,8 @@
 				4E0AAD0A4B163D9BED16D71F /* SettingsView.swift in Sources */,
 				AEC277BC5B45A2C73347B549 /* IOSLimitationsView.swift in Sources */,
 				A00F1BFE2593B2E6A9CA3E6C /* NightstandView.swift in Sources */,
+				7A1100223344556677889901 /* CustomAudioService.swift in Sources */,
+				7A2200223344556677889903 /* CustomAudioPickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

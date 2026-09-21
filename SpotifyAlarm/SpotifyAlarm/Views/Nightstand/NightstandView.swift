@@ -149,19 +149,21 @@ public struct NightstandView: View {
                 .foregroundColor(.white)
             
             HStack(spacing: 16) {
-                Button(action: {
-                    if let item = alarm.spotifyItem {
-                        spotifyAPIService.openSpotifyApp(uri: item.uri)
+                if alarm.spotifyItem != nil {
+                    Button(action: {
+                        if let item = alarm.spotifyItem {
+                            spotifyAPIService.openSpotifyApp(uri: item.uri)
+                        }
+                        audioPlayerService.stopAlarmSound()
+                    }) {
+                        Text("🎵 Ouvrir Spotify")
+                            .font(.headline)
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 12)
+                            .background(Color(red: 0.114, green: 0.725, blue: 0.329))
+                            .cornerRadius(24)
                     }
-                    audioPlayerService.stopAlarmSound()
-                }) {
-                    Text("🎵 Ouvrir Spotify")
-                        .font(.headline)
-                        .foregroundColor(.black)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
-                        .background(Color(red: 0.114, green: 0.725, blue: 0.329))
-                        .cornerRadius(24)
                 }
                 
                 Button(action: {
@@ -171,7 +173,7 @@ public struct NightstandView: View {
                     Text("Arrêter")
                         .font(.headline)
                         .foregroundColor(.white)
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, 24)
                         .padding(.vertical, 12)
                         .background(Color(white: 0.2))
                         .cornerRadius(24)
@@ -212,7 +214,7 @@ public struct NightstandView: View {
         triggeredAlarm = alarm
         
         if let item = alarm.spotifyItem {
-            // Uniquement la musique Spotify + vibrations (pas de sonnerie carillon par-dessus)
+            // Uniquement la musique Spotify + pulsations cadencées
             audioPlayerService.startVibrationOnly()
             
             Task {
@@ -221,12 +223,28 @@ public struct NightstandView: View {
                 } catch {
                     print("Secours sonore activé car Spotify n'a pas pu démarrer: \(error.localizedDescription)")
                     // Secours de sécurité : sonnerie carillon uniquement si Spotify échoue
-                    audioPlayerService.playAlarmSound(targetVolume: alarm.volume, fadeInDuration: 2.0)
+                    audioPlayerService.playAlarmSound(
+                        targetVolume: alarm.volume,
+                        fadeInDuration: 2.0,
+                        vibrateOnBeat: alarm.vibrateOnBeat
+                    )
                 }
             }
+        } else if let customFileName = alarm.customAudioFileName, !customFileName.isEmpty {
+            // Lecture du fichier MP3 personnalisé + vibrations synchronisées sur le rythme
+            audioPlayerService.playCustomAudio(
+                fileName: customFileName,
+                targetVolume: alarm.volume,
+                fadeInDuration: 2.5,
+                vibrateOnBeat: alarm.vibrateOnBeat
+            )
         } else {
-            // Pas de morceau Spotify choisi : sonnerie carillon standard + vibrations
-            audioPlayerService.playAlarmSound(targetVolume: alarm.volume, fadeInDuration: 3.0)
+            // Pas de morceau choisi : sonnerie carillon standard + vibrations
+            audioPlayerService.playAlarmSound(
+                targetVolume: alarm.volume,
+                fadeInDuration: 3.0,
+                vibrateOnBeat: alarm.vibrateOnBeat
+            )
         }
     }
     
