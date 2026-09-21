@@ -210,14 +210,23 @@ public struct NightstandView: View {
     
     private func triggerAlarmNow(_ alarm: Alarm) {
         triggeredAlarm = alarm
-        // 1. Jouer la sonnerie d'alarme
-        audioPlayerService.playAlarmSound(targetVolume: alarm.volume, fadeInDuration: 3.0)
         
-        // 2. Déclencher Spotify si configuré
         if let item = alarm.spotifyItem {
+            // Uniquement la musique Spotify + vibrations (pas de sonnerie carillon par-dessus)
+            audioPlayerService.startVibrationOnly()
+            
             Task {
-                try? await spotifyAPIService.triggerPlayback(item: item)
+                do {
+                    try await spotifyAPIService.triggerPlayback(item: item)
+                } catch {
+                    print("Secours sonore activé car Spotify n'a pas pu démarrer: \(error.localizedDescription)")
+                    // Secours de sécurité : sonnerie carillon uniquement si Spotify échoue
+                    audioPlayerService.playAlarmSound(targetVolume: alarm.volume, fadeInDuration: 2.0)
+                }
             }
+        } else {
+            // Pas de morceau Spotify choisi : sonnerie carillon standard + vibrations
+            audioPlayerService.playAlarmSound(targetVolume: alarm.volume, fadeInDuration: 3.0)
         }
     }
     

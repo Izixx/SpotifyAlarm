@@ -103,6 +103,11 @@ public final class AudioPlayerService: NSObject, ObservableObject, AVAudioPlayer
         self.isPlaying = false
     }
     
+    /// Démarre uniquement les vibrations continues (sans le son d'alarme)
+    public func startVibrationOnly() {
+        startVibration()
+    }
+    
     // MARK: - Vibrations
     
     private func startVibration() {
