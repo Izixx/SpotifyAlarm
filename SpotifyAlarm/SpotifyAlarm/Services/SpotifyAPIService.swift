@@ -32,6 +32,7 @@ public enum SpotifyAPIError: LocalizedError {
 }
 
 /// Service de communication avec l'API Web officielle de Spotify
+@MainActor
 public final class SpotifyAPIService {
     
     public static let shared = SpotifyAPIService()

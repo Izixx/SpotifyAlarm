@@ -46,11 +46,7 @@ public final class NotificationService {
     @discardableResult
     public func requestAuthorization() async -> Bool {
         do {
-            var options: UNAuthorizationOptions = [.alert, .sound, .badge]
-            // En iOS 15+, timeSensitive est disponible
-            if #available(iOS 15.0, *) {
-                options.insert(.timeSensitive)
-            }
+            let options: UNAuthorizationOptions = [.alert, .sound, .badge]
             let granted = try await center.requestAuthorization(options: options)
             return granted
         } catch {

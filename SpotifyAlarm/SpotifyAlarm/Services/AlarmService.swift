@@ -117,7 +117,7 @@ public final class AlarmService: ObservableObject {
     // MARK: - Exemples par défaut
     
     private func createDefaultSampleAlarms() -> [Alarm] {
-        var calendar = Calendar.current
+        let calendar = Calendar.current
         var comps1 = calendar.dateComponents([.year, .month, .day], from: Date())
         comps1.hour = 7
         comps1.minute = 0

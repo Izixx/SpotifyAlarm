@@ -3,6 +3,7 @@ import Combine
 
 /// Mode Chevet (Nightstand Mode) : horloge nocturne plein écran maintenant l'application éveillée.
 /// Permet un réveil 100% direct avec démarrage instantané de Spotify à l'heure programmée.
+@MainActor
 public struct NightstandView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var currentTime = Date()
@@ -10,7 +11,7 @@ public struct NightstandView: View {
     @State private var triggeredAlarm: Alarm? = nil
     
     private let timer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
-    private let alarmService = AlarmService.shared
+    @ObservedObject private var alarmService = AlarmService.shared
     private let audioPlayerService = AudioPlayerService.shared
     private let spotifyAPIService = SpotifyAPIService.shared
     
@@ -111,7 +112,7 @@ public struct NightstandView: View {
                 .foregroundColor(Color(red: 0.114, green: 0.725, blue: 0.329))
                 .font(.system(size: 20))
             
-            if let (alarm, nextDate) = nextAlarm {
+            if let (alarm, _) = nextAlarm {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Prochain réveil à \(alarm.formattedTime)")
                         .font(.subheadline)

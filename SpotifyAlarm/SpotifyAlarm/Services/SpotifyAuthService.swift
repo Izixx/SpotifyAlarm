@@ -64,12 +64,16 @@ public final class SpotifyAuthService: NSObject, ObservableObject, ASWebAuthenti
     
     // MARK: - ASWebAuthenticationPresentationContextProviding
     
-    public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first(where: { $0.isKeyWindow }) else {
-            return ASPresentationAnchor()
+    nonisolated public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        if Thread.isMainThread {
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+            return windowScene?.windows.first(where: { $0.isKeyWindow }) ?? UIWindow()
+        } else {
+            return DispatchQueue.main.sync {
+                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+                return windowScene?.windows.first(where: { $0.isKeyWindow }) ?? UIWindow()
+            }
         }
-        return window
     }
     
     // MARK: - Flux de Connexion PKCE
