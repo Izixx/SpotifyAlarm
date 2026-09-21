@@ -31,6 +31,7 @@ public struct SpotifyConfig {
     
     /// Indique si l'utilisateur a configuré un vrai Client ID.
     public static var isConfigured: Bool {
-        return clientID != "23e0e6a224c4446d8720055b091324f4" && !clientID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let trimmed = clientID.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !trimmed.isEmpty && trimmed != "YOUR_SPOTIFY_CLIENT_ID"
     }
 }
