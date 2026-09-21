@@ -12,9 +12,10 @@ public struct SpotifyAlarmApp: App {
             AlarmListView()
                 .environmentObject(authService)
                 .onOpenURL { url in
-                    // Gestion de l'URL de retour personnalisée si nécessaire
                     if url.scheme == "spotifyalarm" {
-                        print("URL Callback reçue: \(url)")
+                        Task {
+                            await authService.handleRedirectURL(url)
+                        }
                     }
                 }
         }

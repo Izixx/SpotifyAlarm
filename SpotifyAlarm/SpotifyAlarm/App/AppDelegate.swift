@@ -72,4 +72,20 @@ public final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificat
         
         completionHandler()
     }
+    
+    // MARK: - Gestion des URL Schemes (spotifyalarm://)
+    
+    public func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+    ) -> Bool {
+        if url.scheme == "spotifyalarm" {
+            Task { @MainActor in
+                await SpotifyAuthService.shared.handleRedirectURL(url)
+            }
+            return true
+        }
+        return false
+    }
 }

@@ -78,8 +78,91 @@ public final class SpotifyAuthService: NSObject, ObservableObject, ASWebAuthenti
     
     // MARK: - Flux de Connexion PKCE
     
-    /// Démarre le flux d'autorisation OAuth PKCE
+    // MARK: - Flux de Connexion PKCE (Navigateur par défaut : Brave, Safari...)
+    
+    /// Démarre le flux d'autorisation OAuth PKCE en ouvrant le navigateur par défaut (Brave, Safari...)
     public func login() async throws {
+        guard SpotifyConfig.isConfigured else {
+            let error = SpotifyAuthError.clientIDNotConfigured
+            self.lastErrorMessage = error.localizedDescription
+            throw error
+        }
+        
+        isAuthenticating = true
+        lastErrorMessage = nil
+        
+        // 1. Génération du code_verifier et code_challenge (RFC 7636)
+        let verifier = generateCodeVerifier()
+        self.codeVerifier = verifier
+        UserDefaults.standard.set(verifier, forKey: "spotify_pending_code_verifier")
+        
+        let challenge = generateCodeChallenge(from: verifier)
+        let state = UUID().uuidString
+        UserDefaults.standard.set(state, forKey: "spotify_pending_auth_state")
+        
+        // 2. Construction de l'URL d'autorisation
+        var components = URLComponents(string: "https://accounts.spotify.com/authorize")
+        components?.queryItems = [
+            URLQueryItem(name: "client_id", value: SpotifyConfig.clientID),
+            URLQueryItem(name: "response_type", value: "code"),
+            URLQueryItem(name: "redirect_uri", value: SpotifyConfig.redirectURI),
+            URLQueryItem(name: "code_challenge_method", value: "S256"),
+            URLQueryItem(name: "code_challenge", value: challenge),
+            URLQueryItem(name: "scope", value: SpotifyConfig.scopes),
+            URLQueryItem(name: "state", value: state)
+        ]
+        
+        guard let authURL = components?.url else {
+            isAuthenticating = false
+            throw SpotifyAuthError.invalidAuthURL
+        }
+        
+        // 3. Ouvre directement le navigateur web par défaut du système (Brave, Safari...)
+        UIApplication.shared.open(authURL, options: [:]) { success in
+            if !success {
+                Task { @MainActor in
+                    self.isAuthenticating = false
+                    self.lastErrorMessage = "Impossible d'ouvrir votre navigateur web."
+                }
+            }
+        }
+    }
+    
+    /// Traite l'URL de redirection retournée par le navigateur (spotifyalarm://callback?code=...)
+    public func handleRedirectURL(_ url: URL) async {
+        guard url.scheme == "spotifyalarm" else { return }
+        
+        guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let queryItems = urlComponents.queryItems,
+              let code = queryItems.first(where: { $0.name == "code" })?.value else {
+            if let errorParam = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first(where: { $0.name == "error" })?.value {
+                self.lastErrorMessage = "Connexion refusée par Spotify : \(errorParam)"
+            }
+            self.isAuthenticating = false
+            return
+        }
+        
+        guard let verifier = self.codeVerifier ?? UserDefaults.standard.string(forKey: "spotify_pending_code_verifier") else {
+            self.lastErrorMessage = "Session de validation expirée. Veuillez relancer la connexion."
+            self.isAuthenticating = false
+            return
+        }
+        
+        do {
+            try await exchangeCodeForTokens(code: code, verifier: verifier)
+            UserDefaults.standard.removeObject(forKey: "spotify_pending_code_verifier")
+            UserDefaults.standard.removeObject(forKey: "spotify_pending_auth_state")
+            self.codeVerifier = nil
+            self.isAuthenticating = false
+            await refreshUserProfile()
+        } catch {
+            self.isAuthenticating = false
+            self.lastErrorMessage = error.localizedDescription
+        }
+    }
+    
+    /// Alternative : ouvre la session web interne intégrée (ASWebAuthenticationSession)
+    public func loginWithInAppBrowser() async throws {
         guard SpotifyConfig.isConfigured else {
             let error = SpotifyAuthError.clientIDNotConfigured
             self.lastErrorMessage = error.localizedDescription
@@ -90,13 +173,11 @@ public final class SpotifyAuthService: NSObject, ObservableObject, ASWebAuthenti
         lastErrorMessage = nil
         defer { isAuthenticating = false }
         
-        // 1. Génération du code_verifier et code_challenge (RFC 7636)
         let verifier = generateCodeVerifier()
         self.codeVerifier = verifier
         let challenge = generateCodeChallenge(from: verifier)
         let state = UUID().uuidString
         
-        // 2. Construction de l'URL d'autorisation
         var components = URLComponents(string: "https://accounts.spotify.com/authorize")
         components?.queryItems = [
             URLQueryItem(name: "client_id", value: SpotifyConfig.clientID),
@@ -112,7 +193,6 @@ public final class SpotifyAuthService: NSObject, ObservableObject, ASWebAuthenti
             throw SpotifyAuthError.invalidAuthURL
         }
         
-        // 3. Présentation de ASWebAuthenticationSession
         let callbackURL: URL = try await withCheckedThrowingContinuation { continuation in
             let session = ASWebAuthenticationSession(
                 url: authURL,
@@ -134,22 +214,17 @@ public final class SpotifyAuthService: NSObject, ObservableObject, ASWebAuthenti
             }
             
             session.presentationContextProvider = self
-            // Permet de réutiliser les cookies Safari si déjà connecté sur Spotify Web
             session.prefersEphemeralWebBrowserSession = false
             session.start()
         }
         
-        // 4. Extraction du code d'autorisation
         guard let urlComponents = URLComponents(url: callbackURL, resolvingAgainstBaseURL: false),
               let queryItems = urlComponents.queryItems,
               let code = queryItems.first(where: { $0.name == "code" })?.value else {
             throw SpotifyAuthError.missingAuthCode
         }
         
-        // 5. Échange du code contre les jetons d'accès
         try await exchangeCodeForTokens(code: code, verifier: verifier)
-        
-        // 6. Récupération des informations de profil
         await refreshUserProfile()
     }
     
