@@ -14,7 +14,7 @@ public struct SpotifyConfig {
     
     /// Votre Spotify Client ID issu du Developer Dashboard.
     /// Remplacez cette valeur par votre véritable Client ID Spotify.
-    public static let clientID = "YOUR_SPOTIFY_CLIENT_ID"
+    public static let clientID = "23e0e6a224c4446d8720055b091324f4"
     
     /// Schéma de redirection configuré dans Info.plist et le dashboard Spotify.
     public static let redirectURI = "spotifyalarm://callback"
