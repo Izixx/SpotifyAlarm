@@ -9,7 +9,7 @@ public enum SpotifyAPIError: LocalizedError {
     case premiumRequired
     case networkError(String)
     case apiError(Int, String)
-    case parsingError
+    case parsingError(String? = nil)
     
     public var errorDescription: String? {
         switch self {
@@ -25,7 +25,10 @@ public enum SpotifyAPIError: LocalizedError {
             return "Impossible de contacter Spotify : \(msg)"
         case .apiError(let code, let msg):
             return "Erreur Spotify (\(code)) : \(msg)"
-        case .parsingError:
+        case .parsingError(let detail):
+            if let detail = detail, !detail.isEmpty {
+                return "Impossible de traiter la réponse reçue de Spotify (\(detail))."
+            }
             return "Impossible de traiter la réponse reçue de Spotify."
         }
     }
@@ -80,16 +83,29 @@ public final class SpotifyAPIService {
             
             // 1. Morceaux
             if let tracks = searchResult.tracks?.items {
-                for track in tracks {
-                    let artists = track.artists?.compactMap { $0.name }.joined(separator: ", ") ?? "Artiste inconnu"
-                    let image = track.album?.images?.first?.url
+                for trackWrap in tracks {
+                    guard let track = trackWrap?.value,
+                          let id = track.id,
+                          let name = track.name,
+                          let uri = track.uri,
+                          !id.isEmpty else { continue }
+                    
+                    let artists = track.artists?
+                        .compactMap { $0?.name }
+                        .filter { !$0.isEmpty }
+                        .joined(separator: ", ") ?? "Artiste inconnu"
+                    
+                    let image = track.album?.images?
+                        .compactMap { $0?.url }
+                        .first(where: { !$0.isEmpty })
+                    
                     items.append(SpotifyTrackItem(
-                        id: track.id,
-                        name: track.name,
-                        artistName: artists,
+                        id: id,
+                        name: name,
+                        artistName: artists.isEmpty ? "Artiste inconnu" : artists,
                         albumName: track.album?.name,
                         imageUrl: image,
-                        uri: track.uri,
+                        uri: uri,
                         type: .track
                     ))
                 }
@@ -97,16 +113,25 @@ public final class SpotifyAPIService {
             
             // 2. Playlists
             if let playlists = searchResult.playlists?.items {
-                for pl in playlists {
+                for plWrap in playlists {
+                    guard let pl = plWrap?.value,
+                          let id = pl.id,
+                          let name = pl.name,
+                          let uri = pl.uri,
+                          !id.isEmpty else { continue }
+                    
                     let owner = pl.owner?.displayName ?? "Spotify"
-                    let image = pl.images?.first?.url
+                    let image = pl.images?
+                        .compactMap { $0?.url }
+                        .first(where: { !$0.isEmpty })
+                    
                     items.append(SpotifyTrackItem(
-                        id: pl.id,
-                        name: pl.name,
+                        id: id,
+                        name: name,
                         artistName: "Playlist de \(owner)",
                         albumName: pl.description,
                         imageUrl: image,
-                        uri: pl.uri,
+                        uri: uri,
                         type: .playlist
                     ))
                 }
@@ -114,16 +139,29 @@ public final class SpotifyAPIService {
             
             // 3. Albums
             if let albums = searchResult.albums?.items {
-                for alb in albums {
-                    let artists = alb.artists?.compactMap { $0.name }.joined(separator: ", ") ?? "Artiste"
-                    let image = alb.images?.first?.url
+                for albWrap in albums {
+                    guard let alb = albWrap?.value,
+                          let id = alb.id,
+                          let name = alb.name,
+                          let uri = alb.uri,
+                          !id.isEmpty else { continue }
+                    
+                    let artists = alb.artists?
+                        .compactMap { $0?.name }
+                        .filter { !$0.isEmpty }
+                        .joined(separator: ", ") ?? "Artiste"
+                    
+                    let image = alb.images?
+                        .compactMap { $0?.url }
+                        .first(where: { !$0.isEmpty })
+                    
                     items.append(SpotifyTrackItem(
-                        id: alb.id,
-                        name: alb.name,
+                        id: id,
+                        name: name,
                         artistName: "Album de \(artists)",
                         albumName: alb.name,
                         imageUrl: image,
-                        uri: alb.uri,
+                        uri: uri,
                         type: .album
                     ))
                 }
@@ -132,7 +170,7 @@ public final class SpotifyAPIService {
             return items
         } catch {
             print("Erreur de décodage recherche: \(error)")
-            throw SpotifyAPIError.parsingError
+            throw SpotifyAPIError.parsingError(error.localizedDescription)
         }
     }
     
@@ -155,14 +193,21 @@ public final class SpotifyAPIService {
         }
         
         let playlistsResponse = try JSONDecoder().decode(SpotifyUserPlaylistsResponse.self, from: data)
-        return playlistsResponse.items.map { pl in
-            SpotifyTrackItem(
-                id: pl.id,
-                name: pl.name,
-                artistName: "Par \(pl.owner?.displayName ?? "Vous")",
+        return (playlistsResponse.items ?? []).compactMap { plWrap in
+            guard let pl = plWrap?.value,
+                  let id = pl.id,
+                  let name = pl.name,
+                  let uri = pl.uri,
+                  !id.isEmpty else { return nil }
+            let owner = pl.owner?.displayName ?? "Vous"
+            let image = pl.images?.compactMap({ $0?.url }).first(where: { !$0.isEmpty })
+            return SpotifyTrackItem(
+                id: id,
+                name: name,
+                artistName: "Par \(owner)",
                 albumName: pl.description,
-                imageUrl: pl.images?.first?.url,
-                uri: pl.uri,
+                imageUrl: image,
+                uri: uri,
                 type: .playlist
             )
         }

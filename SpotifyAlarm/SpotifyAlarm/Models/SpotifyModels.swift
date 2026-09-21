@@ -67,8 +67,8 @@ public struct SpotifyTrackItem: Identifiable, Codable, Equatable, Hashable {
 // MARK: - Modèles DTO Spotify API
 
 /// Image Spotify (plusieurs résolutions disponibles dans l'API)
-public struct SpotifyImage: Codable, Equatable {
-    public let url: String
+public struct SpotifyImage: Codable, Equatable, Hashable {
+    public let url: String?
     public let height: Int?
     public let width: Int?
 }
@@ -79,7 +79,7 @@ public struct SpotifyUserProfile: Codable, Identifiable {
     public let displayName: String?
     public let email: String?
     public let product: String? // "premium", "free", etc.
-    public let images: [SpotifyImage]?
+    public let images: [SpotifyImage?]?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -94,7 +94,7 @@ public struct SpotifyUserProfile: Codable, Identifiable {
     }
     
     public var avatarUrl: String? {
-        return images?.first?.url
+        return images?.compactMap({ $0?.url }).first(where: { !$0.isEmpty })
     }
 }
 
@@ -140,6 +140,27 @@ public struct SpotifyDevicesResponse: Codable {
     public let devices: [SpotifyDevice]
 }
 
+// MARK: - Décodeur Résilient
+
+/// Décodeur résilient qui capture les éléments individuels d'un tableau sans faire échouer l'ensemble si l'un d'eux est nul ou malformé.
+public struct FailableDecodable<T: Codable>: Codable {
+    public let value: T?
+    
+    public init(value: T?) {
+        self.value = value
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try? decoder.singleValueContainer()
+        self.value = try? container?.decode(T.self)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(value)
+    }
+}
+
 // MARK: - Structures de Recherche Spotify
 
 public struct SpotifySearchResponse: Codable {
@@ -149,50 +170,50 @@ public struct SpotifySearchResponse: Codable {
 }
 
 public struct SpotifyTracksPaging: Codable {
-    public let items: [SpotifyRawTrack]
+    public let items: [FailableDecodable<SpotifyRawTrack>?]?
 }
 
 public struct SpotifyAlbumsPaging: Codable {
-    public let items: [SpotifyRawAlbum]
+    public let items: [FailableDecodable<SpotifyRawAlbum>?]?
 }
 
 public struct SpotifyPlaylistsPaging: Codable {
-    public let items: [SpotifyRawPlaylist]
+    public let items: [FailableDecodable<SpotifyRawPlaylist>?]?
 }
 
 public struct SpotifyRawTrack: Codable {
-    public let id: String
-    public let name: String
-    public let uri: String
-    public let artists: [SpotifyRawArtist]?
+    public let id: String?
+    public let name: String?
+    public let uri: String?
+    public let artists: [SpotifyRawArtist?]?
     public let album: SpotifyRawAlbumBrief?
 }
 
 public struct SpotifyRawArtist: Codable {
     public let id: String?
-    public let name: String
+    public let name: String?
 }
 
 public struct SpotifyRawAlbumBrief: Codable {
     public let id: String?
     public let name: String?
-    public let images: [SpotifyImage]?
+    public let images: [SpotifyImage?]?
 }
 
 public struct SpotifyRawAlbum: Codable {
-    public let id: String
-    public let name: String
-    public let uri: String
-    public let artists: [SpotifyRawArtist]?
-    public let images: [SpotifyImage]?
+    public let id: String?
+    public let name: String?
+    public let uri: String?
+    public let artists: [SpotifyRawArtist?]?
+    public let images: [SpotifyImage?]?
 }
 
 public struct SpotifyRawPlaylist: Codable {
-    public let id: String
-    public let name: String
-    public let uri: String
+    public let id: String?
+    public let name: String?
+    public let uri: String?
     public let description: String?
-    public let images: [SpotifyImage]?
+    public let images: [SpotifyImage?]?
     public let owner: SpotifyRawOwner?
 }
 
@@ -204,5 +225,5 @@ public struct SpotifyRawOwner: Codable {
 }
 
 public struct SpotifyUserPlaylistsResponse: Codable {
-    public let items: [SpotifyRawPlaylist]
+    public let items: [FailableDecodable<SpotifyRawPlaylist>?]?
 }
