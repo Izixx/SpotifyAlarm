@@ -49,9 +49,14 @@ public final class SpotifyAPIService {
         
         let token = try await authService.getValidAccessToken()
         
-        let typesString = types.map { $0.rawValue }.joined(separator: ",")
-        guard let encodedQuery = cleanQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-              let url = URL(string: "https://api.spotify.com/v1/search?q=\(encodedQuery)&type=\(typesString)&limit=25") else {
+        var components = URLComponents(string: "https://api.spotify.com/v1/search")
+        components?.queryItems = [
+            URLQueryItem(name: "q", value: cleanQuery),
+            URLQueryItem(name: "type", value: types.map { $0.rawValue }.joined(separator: ",")),
+            URLQueryItem(name: "limit", value: "10")
+        ]
+        
+        guard let url = components?.url else {
             throw SpotifyAPIError.invalidURL
         }
         
@@ -136,7 +141,7 @@ public final class SpotifyAPIService {
     public func fetchUserPlaylists() async throws -> [SpotifyTrackItem] {
         let token = try await authService.getValidAccessToken()
         
-        guard let url = URL(string: "https://api.spotify.com/v1/me/playlists?limit=30") else {
+        guard let url = URL(string: "https://api.spotify.com/v1/me/playlists?limit=20") else {
             throw SpotifyAPIError.invalidURL
         }
         
