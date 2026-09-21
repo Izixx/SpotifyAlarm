@@ -1,0 +1,514 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DDB29ADF6D242E529EAAAD94 /* SpotifyAlarmApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99777C0EB1C111E36C88D017 /* SpotifyAlarmApp.swift */; };
+		1F5D36372320A6BAD10FBE56 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AAF2B98F10235E3AB806192 /* AppDelegate.swift */; };
+		88C3A1AF2626AF481DD487FE /* SpotifyConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180ADC7F29F934E0CDD9D321 /* SpotifyConfig.swift */; };
+		3A31831C46592649C0399574 /* RepeatDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8F9328E8686C7202AA77C4 /* RepeatDay.swift */; };
+		4E590620793864C421C441EE /* SpotifyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0392C9BF8F671C91B1A177 /* SpotifyModels.swift */; };
+		96756192E0CADA80C8C96AAA /* Alarm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24DB716C03DFD7769B57348 /* Alarm.swift */; };
+		5D040DFA978F3A207627D256 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27645A3D09C7036CD4988FAE /* KeychainService.swift */; };
+		1C961332ACE83C9B6F4C1927 /* SpotifyAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE93CE566C2FC45D53174C7 /* SpotifyAuthService.swift */; };
+		2DD8724DCD210DDC588FB33C /* SpotifyAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C2DAFCC9748A1FFEE3A12A /* SpotifyAPIService.swift */; };
+		C83CE3E760DF71EF9CCA5407 /* AudioPlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4159A997349D866A05D21EA /* AudioPlayerService.swift */; };
+		578249640E9056D2D5DDD677 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B639C75A604A5E8C9B7919 /* NotificationService.swift */; };
+		2BE3EFE58030526CA81171A0 /* AlarmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB9422659B2FE4374F97C4D0 /* AlarmService.swift */; };
+		1C0D876F888F34123FC1FAC2 /* AlarmListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57C0AA2EBC4D97FF27EC3FC /* AlarmListViewModel.swift */; };
+		7C9A57779B0DBA693BFA13F1 /* AlarmEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1055A1D7E823D7516EFB2187 /* AlarmEditViewModel.swift */; };
+		49B70E7BED366B9711256986 /* SpotifyPickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7D59F23FB5E7EEE63ABF20 /* SpotifyPickerViewModel.swift */; };
+		60D05BA794AF3AE40ADD8639 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71F50B7F5CA055C1EC1EE99 /* SettingsViewModel.swift */; };
+		090646B766D89D13137648BC /* AlarmListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F40B12504C4AC536B08E107 /* AlarmListView.swift */; };
+		1383644E8C673C32E1155D85 /* AlarmRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E000550641654AAFAC9B8C9C /* AlarmRowView.swift */; };
+		CF19620BEADA06D39438EEC0 /* DaySelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F414E8B2AC225A6FDB5AA04F /* DaySelectorView.swift */; };
+		1B99CDEB678EE45011FE5CC6 /* AlarmEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22EF6C5155E517DAB592B5B /* AlarmEditView.swift */; };
+		9E6241328AC6D90CF3F5E615 /* SpotifyItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56ADF2E3971B06886D63AA5B /* SpotifyItemRow.swift */; };
+		01D4FDF57E67BE6C21B20168 /* SpotifyPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420B077ED14974D1CCFAC034 /* SpotifyPickerView.swift */; };
+		4E0AAD0A4B163D9BED16D71F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E64E380A6759A0A6E31129 /* SettingsView.swift */; };
+		AEC277BC5B45A2C73347B549 /* IOSLimitationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6C1C372961AEE794C803B /* IOSLimitationsView.swift */; };
+		A00F1BFE2593B2E6A9CA3E6C /* NightstandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8BBE34D6AAA8E170BE152F /* NightstandView.swift */; };
+		F179FDE3CCB35692A1872E2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0DE19F5ACF9C69746C35A9A /* Assets.xcassets */; };
+		CBDED0B28F1761F27F13C4F2 /* alarm_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 46292FA83C844FE75CAB29CA /* alarm_sound.wav */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		99777C0EB1C111E36C88D017 /* SpotifyAlarmApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpotifyAlarmApp.swift"; sourceTree = "<group>"; };
+		4AAF2B98F10235E3AB806192 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate.swift"; sourceTree = "<group>"; };
+		180ADC7F29F934E0CDD9D321 /* SpotifyConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpotifyConfig.swift"; sourceTree = "<group>"; };
+		0B8F9328E8686C7202AA77C4 /* RepeatDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RepeatDay.swift"; sourceTree = "<group>"; };
+		2C0392C9BF8F671C91B1A177 /* SpotifyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpotifyModels.swift"; sourceTree = "<group>"; };
+		C24DB716C03DFD7769B57348 /* Alarm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Alarm.swift"; sourceTree = "<group>"; };
+		27645A3D09C7036CD4988FAE /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeychainService.swift"; sourceTree = "<group>"; };
+		FCE93CE566C2FC45D53174C7 /* SpotifyAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpotifyAuthService.swift"; sourceTree = "<group>"; };
+		68C2DAFCC9748A1FFEE3A12A /* SpotifyAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpotifyAPIService.swift"; sourceTree = "<group>"; };
+		F4159A997349D866A05D21EA /* AudioPlayerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioPlayerService.swift"; sourceTree = "<group>"; };
+		55B639C75A604A5E8C9B7919 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationService.swift"; sourceTree = "<group>"; };
+		CB9422659B2FE4374F97C4D0 /* AlarmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlarmService.swift"; sourceTree = "<group>"; };
+		C57C0AA2EBC4D97FF27EC3FC /* AlarmListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlarmListViewModel.swift"; sourceTree = "<group>"; };
+		1055A1D7E823D7516EFB2187 /* AlarmEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlarmEditViewModel.swift"; sourceTree = "<group>"; };
+		3C7D59F23FB5E7EEE63ABF20 /* SpotifyPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpotifyPickerViewModel.swift"; sourceTree = "<group>"; };
+		C71F50B7F5CA055C1EC1EE99 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsViewModel.swift"; sourceTree = "<group>"; };
+		5F40B12504C4AC536B08E107 /* AlarmListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlarmListView.swift"; sourceTree = "<group>"; };
+		E000550641654AAFAC9B8C9C /* AlarmRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlarmRowView.swift"; sourceTree = "<group>"; };
+		F414E8B2AC225A6FDB5AA04F /* DaySelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DaySelectorView.swift"; sourceTree = "<group>"; };
+		C22EF6C5155E517DAB592B5B /* AlarmEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlarmEditView.swift"; sourceTree = "<group>"; };
+		56ADF2E3971B06886D63AA5B /* SpotifyItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpotifyItemRow.swift"; sourceTree = "<group>"; };
+		420B077ED14974D1CCFAC034 /* SpotifyPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpotifyPickerView.swift"; sourceTree = "<group>"; };
+		84E64E380A6759A0A6E31129 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsView.swift"; sourceTree = "<group>"; };
+		5EB6C1C372961AEE794C803B /* IOSLimitationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IOSLimitationsView.swift"; sourceTree = "<group>"; };
+		5F8BBE34D6AAA8E170BE152F /* NightstandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NightstandView.swift"; sourceTree = "<group>"; };
+		B0DE19F5ACF9C69746C35A9A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
+		46292FA83C844FE75CAB29CA /* alarm_sound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "alarm_sound.wav"; sourceTree = "<group>"; };
+		D75D233F903B14D64C448BEA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
+		2EBD987849E09EFAF7E2AB55 /* SpotifyAlarm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpotifyAlarm.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A9E872B0C4F3AB11D258C39F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0A85897F1A32FE9B91C081CD = {
+			isa = PBXGroup;
+			children = (
+				3DFE442710E429386E53D077 /* App */,
+				F6AA49E955F6826DFC0A0A12 /* Config */,
+				A4C2A37E76047A91E5C0296C /* Models */,
+				803A864E0445A2F0C4BCA33B /* Services */,
+				88E68C707EC7772BE45CD9E7 /* ViewModels */,
+				C376D4D9BF34E56D9B2FBC3F /* Views */,
+				F5264EC371987BBAC756C3C3 /* Resources */,
+				B88D7E26791946AEFDCC8BB7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3DFE442710E429386E53D077 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				99777C0EB1C111E36C88D017 /* SpotifyAlarmApp.swift */,
+				4AAF2B98F10235E3AB806192 /* AppDelegate.swift */,
+			);
+			path = SpotifyAlarm/App;
+			sourceTree = "<group>";
+		};
+		F6AA49E955F6826DFC0A0A12 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				180ADC7F29F934E0CDD9D321 /* SpotifyConfig.swift */,
+			);
+			path = SpotifyAlarm/Config;
+			sourceTree = "<group>";
+		};
+		A4C2A37E76047A91E5C0296C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0B8F9328E8686C7202AA77C4 /* RepeatDay.swift */,
+				2C0392C9BF8F671C91B1A177 /* SpotifyModels.swift */,
+				C24DB716C03DFD7769B57348 /* Alarm.swift */,
+			);
+			path = SpotifyAlarm/Models;
+			sourceTree = "<group>";
+		};
+		803A864E0445A2F0C4BCA33B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				27645A3D09C7036CD4988FAE /* KeychainService.swift */,
+				FCE93CE566C2FC45D53174C7 /* SpotifyAuthService.swift */,
+				68C2DAFCC9748A1FFEE3A12A /* SpotifyAPIService.swift */,
+				F4159A997349D866A05D21EA /* AudioPlayerService.swift */,
+				55B639C75A604A5E8C9B7919 /* NotificationService.swift */,
+				CB9422659B2FE4374F97C4D0 /* AlarmService.swift */,
+			);
+			path = SpotifyAlarm/Services;
+			sourceTree = "<group>";
+		};
+		88E68C707EC7772BE45CD9E7 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				C57C0AA2EBC4D97FF27EC3FC /* AlarmListViewModel.swift */,
+				1055A1D7E823D7516EFB2187 /* AlarmEditViewModel.swift */,
+				3C7D59F23FB5E7EEE63ABF20 /* SpotifyPickerViewModel.swift */,
+				C71F50B7F5CA055C1EC1EE99 /* SettingsViewModel.swift */,
+			);
+			path = SpotifyAlarm/ViewModels;
+			sourceTree = "<group>";
+		};
+		C376D4D9BF34E56D9B2FBC3F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B66FC87D25E281D7B8E32E8E /* Main */,
+				0FF26AEDF9DAE6A40A80CDAE /* Edit */,
+				6C73913C609B93281926789F /* Spotify */,
+				DD7ECEB04C949C6B3B99549C /* Settings */,
+				11B14FA625B172E290C4F55B /* Nightstand */,
+			);
+			path = SpotifyAlarm/Views;
+			sourceTree = "<group>";
+		};
+		B66FC87D25E281D7B8E32E8E /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				5F40B12504C4AC536B08E107 /* AlarmListView.swift */,
+				E000550641654AAFAC9B8C9C /* AlarmRowView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		0FF26AEDF9DAE6A40A80CDAE /* Edit */ = {
+			isa = PBXGroup;
+			children = (
+				F414E8B2AC225A6FDB5AA04F /* DaySelectorView.swift */,
+				C22EF6C5155E517DAB592B5B /* AlarmEditView.swift */,
+			);
+			path = Edit;
+			sourceTree = "<group>";
+		};
+		6C73913C609B93281926789F /* Spotify */ = {
+			isa = PBXGroup;
+			children = (
+				56ADF2E3971B06886D63AA5B /* SpotifyItemRow.swift */,
+				420B077ED14974D1CCFAC034 /* SpotifyPickerView.swift */,
+			);
+			path = Spotify;
+			sourceTree = "<group>";
+		};
+		DD7ECEB04C949C6B3B99549C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				84E64E380A6759A0A6E31129 /* SettingsView.swift */,
+				5EB6C1C372961AEE794C803B /* IOSLimitationsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		11B14FA625B172E290C4F55B /* Nightstand */ = {
+			isa = PBXGroup;
+			children = (
+				5F8BBE34D6AAA8E170BE152F /* NightstandView.swift */,
+			);
+			path = Nightstand;
+			sourceTree = "<group>";
+		};
+		F5264EC371987BBAC756C3C3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B0DE19F5ACF9C69746C35A9A /* Assets.xcassets */,
+				46292FA83C844FE75CAB29CA /* alarm_sound.wav */,
+				D75D233F903B14D64C448BEA /* Info.plist */,
+			);
+			path = SpotifyAlarm/Resources;
+			sourceTree = "<group>";
+		};
+		B88D7E26791946AEFDCC8BB7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2EBD987849E09EFAF7E2AB55 /* SpotifyAlarm.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B69DF428F225F844AE3BFB0A /* SpotifyAlarm */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8DC218CD826613AD2E353F27 /* Build configuration list for PBXNativeTarget "SpotifyAlarm" */;
+			buildPhases = (
+				7EE609159AC086BAB15FF998 /* Sources */,
+				A9E872B0C4F3AB11D258C39F /* Frameworks */,
+				A2892AFC2D88060C0AA91373 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SpotifyAlarm;
+			productName = SpotifyAlarm;
+			productReference = 2EBD987849E09EFAF7E2AB55 /* SpotifyAlarm.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		22B0F811FED6E98308EBF872 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					B69DF428F225F844AE3BFB0A = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = C1B0D475F7746409ADBE8D6F /* Build configuration list for PBXProject "SpotifyAlarm" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = fr;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				fr,
+				Base,
+			);
+			mainGroup = 0A85897F1A32FE9B91C081CD;
+			productRefGroup = B88D7E26791946AEFDCC8BB7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B69DF428F225F844AE3BFB0A /* SpotifyAlarm */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A2892AFC2D88060C0AA91373 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F179FDE3CCB35692A1872E2D /* Assets.xcassets in Resources */,
+				CBDED0B28F1761F27F13C4F2 /* alarm_sound.wav in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7EE609159AC086BAB15FF998 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DDB29ADF6D242E529EAAAD94 /* SpotifyAlarmApp.swift in Sources */,
+				1F5D36372320A6BAD10FBE56 /* AppDelegate.swift in Sources */,
+				88C3A1AF2626AF481DD487FE /* SpotifyConfig.swift in Sources */,
+				3A31831C46592649C0399574 /* RepeatDay.swift in Sources */,
+				4E590620793864C421C441EE /* SpotifyModels.swift in Sources */,
+				96756192E0CADA80C8C96AAA /* Alarm.swift in Sources */,
+				5D040DFA978F3A207627D256 /* KeychainService.swift in Sources */,
+				1C961332ACE83C9B6F4C1927 /* SpotifyAuthService.swift in Sources */,
+				2DD8724DCD210DDC588FB33C /* SpotifyAPIService.swift in Sources */,
+				C83CE3E760DF71EF9CCA5407 /* AudioPlayerService.swift in Sources */,
+				578249640E9056D2D5DDD677 /* NotificationService.swift in Sources */,
+				2BE3EFE58030526CA81171A0 /* AlarmService.swift in Sources */,
+				1C0D876F888F34123FC1FAC2 /* AlarmListViewModel.swift in Sources */,
+				7C9A57779B0DBA693BFA13F1 /* AlarmEditViewModel.swift in Sources */,
+				49B70E7BED366B9711256986 /* SpotifyPickerViewModel.swift in Sources */,
+				60D05BA794AF3AE40ADD8639 /* SettingsViewModel.swift in Sources */,
+				090646B766D89D13137648BC /* AlarmListView.swift in Sources */,
+				1383644E8C673C32E1155D85 /* AlarmRowView.swift in Sources */,
+				CF19620BEADA06D39438EEC0 /* DaySelectorView.swift in Sources */,
+				1B99CDEB678EE45011FE5CC6 /* AlarmEditView.swift in Sources */,
+				9E6241328AC6D90CF3F5E615 /* SpotifyItemRow.swift in Sources */,
+				01D4FDF57E67BE6C21B20168 /* SpotifyPickerView.swift in Sources */,
+				4E0AAD0A4B163D9BED16D71F /* SettingsView.swift in Sources */,
+				AEC277BC5B45A2C73347B549 /* IOSLimitationsView.swift in Sources */,
+				A00F1BFE2593B2E6A9CA3E6C /* NightstandView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		56EA2DDD7EA6B62E92CB9329 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDEFINED_VARIABLES = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F8C11F1832EF84A327194F08 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDEFINED_VARIABLES = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		BAF6A2D9E2DF7BB8DC3B2BCF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "SpotifyAlarm/Resources/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.spotifyalarm.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1";
+			};
+			name = Debug;
+		};
+		C3348D6D1BB2E55F8B064448 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "SpotifyAlarm/Resources/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.spotifyalarm.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C1B0D475F7746409ADBE8D6F /* Build configuration list for PBXProject "SpotifyAlarm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56EA2DDD7EA6B62E92CB9329 /* Debug */,
+				F8C11F1832EF84A327194F08 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8DC218CD826613AD2E353F27 /* Build configuration list for PBXNativeTarget "SpotifyAlarm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BAF6A2D9E2DF7BB8DC3B2BCF /* Debug */,
+				C3348D6D1BB2E55F8B064448 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = 22B0F811FED6E98308EBF872 /* Project object */;
+}
