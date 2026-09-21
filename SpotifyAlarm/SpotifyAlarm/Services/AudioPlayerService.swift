@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import AudioToolbox
 
 /// Service de lecture audio locale pour les sonneries de réveil et le secours sonore.
 /// Utilise la catégorie `.playback` pour sonner même si le commutateur silencieux physique est activé.
@@ -11,6 +12,7 @@ public final class AudioPlayerService: NSObject, ObservableObject, AVAudioPlayer
     
     private var audioPlayer: AVAudioPlayer?
     private var fadeTimer: Timer?
+    private var vibrationTimer: Timer?
     
     override private init() {
         super.init()
@@ -83,17 +85,38 @@ public final class AudioPlayerService: NSObject, ObservableObject, AVAudioPlayer
                 audioPlayer?.play()
                 self.isPlaying = true
             }
+            
+            // Démarrage des vibrations continues
+            startVibration()
         } catch {
             print("Erreur lors de la lecture audio: \(error.localizedDescription)")
         }
     }
     
-    /// Arrête la sonnerie d'alarme
+    /// Arrête la sonnerie d'alarme et les vibrations
     public func stopAlarmSound() {
         fadeTimer?.invalidate()
         fadeTimer = nil
+        stopVibration()
         audioPlayer?.stop()
         audioPlayer = nil
         self.isPlaying = false
+    }
+    
+    // MARK: - Vibrations
+    
+    private func startVibration() {
+        stopVibration()
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+        DispatchQueue.main.async {
+            self.vibrationTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { _ in
+                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+            }
+        }
+    }
+    
+    private func stopVibration() {
+        vibrationTimer?.invalidate()
+        vibrationTimer = nil
     }
 }
