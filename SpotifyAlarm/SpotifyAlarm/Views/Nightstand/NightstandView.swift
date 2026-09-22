@@ -84,11 +84,13 @@ public struct NightstandView: View {
         .onAppear {
             // Empêche la mise en veille automatique tant que le mode chevet est affiché
             UIApplication.shared.isIdleTimerDisabled = true
+            SleepService.shared.startSleepSession()
         }
         .onDisappear {
             // Restaure la mise en veille standard
             UIApplication.shared.isIdleTimerDisabled = false
             audioPlayerService.stopAlarmSound()
+            _ = SleepService.shared.endSleepSession(quality: 4)
         }
         .onReceive(timer) { newTime in
             self.currentTime = newTime

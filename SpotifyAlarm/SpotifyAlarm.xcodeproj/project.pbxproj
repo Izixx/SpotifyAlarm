@@ -36,6 +36,11 @@
 		CBDED0B28F1761F27F13C4F2 /* alarm_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 46292FA83C844FE75CAB29CA /* alarm_sound.wav */; };
 		7A1100223344556677889901 /* CustomAudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1100223344556677889902 /* CustomAudioService.swift */; };
 		7A2200223344556677889903 /* CustomAudioPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2200223344556677889904 /* CustomAudioPickerView.swift */; };
+		7B1100223344556677889901 /* SleepSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1100223344556677889902 /* SleepSession.swift */; };
+		7B2200223344556677889903 /* SleepService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2200223344556677889904 /* SleepService.swift */; };
+		7B3300223344556677889905 /* SleepSoundsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3300223344556677889906 /* SleepSoundsService.swift */; };
+		7B4400223344556677889907 /* SleepTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4400223344556677889908 /* SleepTrackerView.swift */; };
+		7B6600223344556677889910 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6600223344556677889911 /* MainTabView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +74,11 @@
 		D75D233F903B14D64C448BEA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
 		7A1100223344556677889902 /* CustomAudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomAudioService.swift"; sourceTree = "<group>"; };
 		7A2200223344556677889904 /* CustomAudioPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomAudioPickerView.swift"; sourceTree = "<group>"; };
+		7B1100223344556677889902 /* SleepSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SleepSession.swift"; sourceTree = "<group>"; };
+		7B2200223344556677889904 /* SleepService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SleepService.swift"; sourceTree = "<group>"; };
+		7B3300223344556677889906 /* SleepSoundsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SleepSoundsService.swift"; sourceTree = "<group>"; };
+		7B4400223344556677889908 /* SleepTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SleepTrackerView.swift"; sourceTree = "<group>"; };
+		7B6600223344556677889911 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainTabView.swift"; sourceTree = "<group>"; };
 		2EBD987849E09EFAF7E2AB55 /* SpotifyAlarm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpotifyAlarm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -120,6 +130,7 @@
 				0B8F9328E8686C7202AA77C4 /* RepeatDay.swift */,
 				2C0392C9BF8F671C91B1A177 /* SpotifyModels.swift */,
 				C24DB716C03DFD7769B57348 /* Alarm.swift */,
+				7B1100223344556677889902 /* SleepSession.swift */,
 			);
 			path = SpotifyAlarm/Models;
 			sourceTree = "<group>";
@@ -134,6 +145,8 @@
 				55B639C75A604A5E8C9B7919 /* NotificationService.swift */,
 				CB9422659B2FE4374F97C4D0 /* AlarmService.swift */,
 				7A1100223344556677889902 /* CustomAudioService.swift */,
+				7B2200223344556677889904 /* SleepService.swift */,
+				7B3300223344556677889906 /* SleepSoundsService.swift */,
 			);
 			path = SpotifyAlarm/Services;
 			sourceTree = "<group>";
@@ -158,6 +171,7 @@
 				DD7ECEB04C949C6B3B99549C /* Settings */,
 				11B14FA625B172E290C4F55B /* Nightstand */,
 				7A3300223344556677889905 /* CustomAudio */,
+				7B5500223344556677889909 /* Sleep */,
 			);
 			path = SpotifyAlarm/Views;
 			sourceTree = "<group>";
@@ -165,6 +179,7 @@
 		B66FC87D25E281D7B8E32E8E /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				7B6600223344556677889911 /* MainTabView.swift */,
 				5F40B12504C4AC536B08E107 /* AlarmListView.swift */,
 				E000550641654AAFAC9B8C9C /* AlarmRowView.swift */,
 			);
@@ -212,6 +227,14 @@
 				7A2200223344556677889904 /* CustomAudioPickerView.swift */,
 			);
 			path = CustomAudio;
+			sourceTree = "<group>";
+		};
+		7B5500223344556677889909 /* Sleep */ = {
+			isa = PBXGroup;
+			children = (
+				7B4400223344556677889908 /* SleepTrackerView.swift */,
+			);
+			path = Sleep;
 			sourceTree = "<group>";
 		};
 		F5264EC371987BBAC756C3C3 /* Resources */ = {
@@ -330,6 +353,11 @@
 				A00F1BFE2593B2E6A9CA3E6C /* NightstandView.swift in Sources */,
 				7A1100223344556677889901 /* CustomAudioService.swift in Sources */,
 				7A2200223344556677889903 /* CustomAudioPickerView.swift in Sources */,
+				7B1100223344556677889901 /* SleepSession.swift in Sources */,
+				7B2200223344556677889903 /* SleepService.swift in Sources */,
+				7B3300223344556677889905 /* SleepSoundsService.swift in Sources */,
+				7B4400223344556677889907 /* SleepTrackerView.swift in Sources */,
+				7B6600223344556677889910 /* MainTabView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

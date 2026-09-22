@@ -5,8 +5,11 @@ public struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = SettingsViewModel()
     @State private var showLimitationsSheet = false
+    public let isSheet: Bool
     
-    public init() {}
+    public init(isSheet: Bool = true) {
+        self.isSheet = isSheet
+    }
     
     public var body: some View {
         NavigationStack {
@@ -37,11 +40,13 @@ public struct SettingsView: View {
             .navigationTitle("Paramètres")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Fermer") {
-                        dismiss()
+                if isSheet {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Fermer") {
+                            dismiss()
+                        }
+                        .foregroundColor(.white)
                     }
-                    .foregroundColor(.white)
                 }
             }
             .sheet(isPresented: $showLimitationsSheet) {

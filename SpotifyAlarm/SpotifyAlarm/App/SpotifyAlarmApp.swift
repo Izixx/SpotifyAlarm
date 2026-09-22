@@ -9,7 +9,7 @@ public struct SpotifyAlarmApp: App {
     
     public var body: some Scene {
         WindowGroup {
-            AlarmListView()
+            MainTabView()
                 .environmentObject(authService)
                 .onOpenURL { url in
                     if url.scheme == "spotifyalarm" {
