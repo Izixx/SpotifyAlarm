@@ -100,6 +100,61 @@ public struct AlarmEditView: View {
                         }
                         .padding(.horizontal, 16)
                         
+                        // 5b. Réveil Intelligent (Smart Alarm)
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("RÉVEIL INTELLIGENT (CYCLE DE SOMMEIL)")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.gray)
+                                .padding(.horizontal, 4)
+                            
+                            VStack(spacing: 12) {
+                                Toggle(isOn: $viewModel.isSmartAlarmEnabled) {
+                                    HStack(spacing: 10) {
+                                        Image(systemName: "sparkles")
+                                            .font(.system(size: 18))
+                                            .foregroundColor(.yellow)
+                                        
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("Activer le réveil intelligent")
+                                                .font(.subheadline)
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(.white)
+                                            Text("Déclenche l'alarme en phase de sommeil léger dans la fenêtre choisie pour un réveil sans fatigue.")
+                                                .font(.caption2)
+                                                .foregroundColor(.gray)
+                                        }
+                                    }
+                                }
+                                .tint(Color.yellow)
+                                
+                                if viewModel.isSmartAlarmEnabled {
+                                    Divider()
+                                        .background(Color.white.opacity(0.1))
+                                    
+                                    HStack {
+                                        Text("Fenêtre de réveil")
+                                            .font(.subheadline)
+                                            .foregroundColor(.white)
+                                        
+                                        Spacer()
+                                        
+                                        Picker("Fenêtre", selection: $viewModel.smartAlarmWindowMinutes) {
+                                            Text("15 min").tag(15)
+                                            Text("20 min").tag(20)
+                                            Text("30 min").tag(30)
+                                        }
+                                        .pickerStyle(.segmented)
+                                        .frame(width: 170)
+                                    }
+                                }
+                            }
+                            .padding(14)
+                            .background(Color(white: 0.12))
+                            .cornerRadius(12)
+                        }
+                        .padding(.horizontal, 16)
+                        
                         // 6. Réglage du Volume
                         VStack(alignment: .leading, spacing: 10) {
                             HStack {

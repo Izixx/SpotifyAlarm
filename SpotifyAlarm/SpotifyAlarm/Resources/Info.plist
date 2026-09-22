@@ -41,6 +41,8 @@
 	<array>
 		<string>audio</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Spotify Alarm utilise le microphone pour analyser les phases de votre sommeil et détecter les ronflements pendant la nuit.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>

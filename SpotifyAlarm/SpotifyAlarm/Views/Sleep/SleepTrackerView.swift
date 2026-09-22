@@ -5,8 +5,10 @@ public struct SleepTrackerView: View {
     @ObservedObject private var sleepService = SleepService.shared
     @ObservedObject private var soundsService = SleepSoundsService.shared
     @ObservedObject private var alarmService = AlarmService.shared
+    @ObservedObject private var analysisService = SleepAnalysisService.shared
     
     @State private var isAddManualPresented: Bool = false
+    @State private var selectedSessionForHypnogram: SleepSession? = nil
     @State private var showAlarmCreatedAlert: Bool = false
     @State private var createdAlarmMessage: String = ""
     
@@ -58,6 +60,9 @@ public struct SleepTrackerView: View {
             .sheet(isPresented: $isAddManualPresented) {
                 AddManualSleepView()
             }
+            .sheet(item: $selectedSessionForHypnogram) { session in
+                HypnogramView(session: session)
+            }
             .alert("Alarme Programmée", isPresented: $showAlarmCreatedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -78,7 +83,7 @@ public struct SleepTrackerView: View {
                             .fill(Color(red: 0.6, green: 0.3, blue: 1.0))
                             .frame(width: 10, height: 10)
                         
-                        Text("SESSION DE SOMMEIL EN COURS")
+                        Text("ANALYSE DU SOMMEIL EN DIRECT")
                             .font(.caption)
                             .fontWeight(.bold)
                             .foregroundColor(Color(red: 0.7, green: 0.5, blue: 1.0))
@@ -90,21 +95,75 @@ public struct SleepTrackerView: View {
                             .foregroundColor(.gray)
                     }
                     
+                    // Indicateurs en direct (Capteurs & Phase)
+                    HStack(spacing: 12) {
+                        // Badge de phase actuelle
+                        HStack(spacing: 6) {
+                            Image(systemName: analysisService.currentStage.systemIcon)
+                                .font(.system(size: 13))
+                            Text(analysisService.currentStage.displayName)
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                        }
+                        .foregroundColor(Color(hex: analysisService.currentStage.colorHex))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color(white: 0.1))
+                        .cornerRadius(10)
+                        
+                        Spacer()
+                        
+                        // Niveau Sonore
+                        HStack(spacing: 4) {
+                            Image(systemName: "mic.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(.cyan)
+                            Text("\(Int(analysisService.currentDecibels)) dB")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                        }
+                        
+                        // Ronflement
+                        if analysisService.currentSnoreMinutes > 0 {
+                            HStack(spacing: 4) {
+                                Image(systemName: "waveform")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.orange)
+                                Text("\(analysisService.currentSnoreMinutes)m ronfl.")
+                                    .font(.caption)
+                                    .foregroundColor(.orange)
+                            }
+                        }
+                    }
+                    .padding(10)
+                    .background(Color.black.opacity(0.3))
+                    .cornerRadius(12)
+                    
                     HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Bonne nuit 🌙")
-                                .font(.title3)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Capteurs actifs 🌙")
+                                .font(.subheadline)
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
-                            Text("Votre réveil enregistrera automatiquement la durée de votre nuit.")
-                                .font(.caption)
+                            Text("Les phases et bruits sont enregistrés pour votre hypnogramme.")
+                                .font(.caption2)
                                 .foregroundColor(.gray)
                         }
                         
                         Spacer()
                         
                         Button(action: {
-                            sleepService.endSleepSession(at: Date(), quality: 4)
+                            let results = analysisService.finishAnalysis()
+                            _ = sleepService.endSleepSession(
+                                at: Date(),
+                                quality: 4,
+                                stages: results.stages,
+                                snoreMinutes: results.snoreMinutes,
+                                snoreEpisodes: results.snoreEpisodes,
+                                averageDB: results.averageDB,
+                                calculatedScore: results.sleepScore
+                            )
                         }) {
                             Text("☀️ Je me réveille")
                                 .font(.subheadline)
@@ -139,7 +198,7 @@ public struct SleepTrackerView: View {
                         Text("Prêt pour la nuit ?")
                             .font(.headline)
                             .foregroundColor(.white)
-                        Text("Démarrez le suivi ou posez votre iPhone en Mode Chevet.")
+                        Text("Lancez le suivi ou ouvrez le Mode Chevet")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
@@ -147,16 +206,17 @@ public struct SleepTrackerView: View {
                     Spacer()
                     
                     Button(action: {
-                        sleepService.startSleepSession(at: Date())
+                        sleepService.startSleepSession()
+                        analysisService.startAnalysis()
                     }) {
-                        Text("Dormir")
+                        Text("Démarrer")
                             .font(.subheadline)
                             .fontWeight(.bold)
                             .foregroundColor(.black)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                             .background(Color(red: 0.114, green: 0.725, blue: 0.329))
-                            .cornerRadius(16)
+                            .cornerRadius(18)
                     }
                 }
                 .padding(16)
@@ -476,34 +536,53 @@ public struct SleepTrackerView: View {
                 VStack(spacing: 8) {
                     ForEach(sleepService.sessions.prefix(10)) { session in
                         HStack(spacing: 12) {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(session.formattedNightSummary)
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white)
-                                
-                                HStack(spacing: 6) {
-                                    Text("\(session.formattedStartTime) → \(session.formattedEndTime)")
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-                                    Text("•")
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-                                    HStack(spacing: 1) {
-                                        ForEach(1...session.qualityRating, id: \.self) { _ in
-                                            Image(systemName: "star.fill")
-                                                .font(.system(size: 8))
-                                                .foregroundColor(.yellow)
+                            Button(action: {
+                                selectedSessionForHypnogram = session
+                            }) {
+                                HStack(spacing: 12) {
+                                    // Badge Score
+                                    ZStack {
+                                        Circle()
+                                            .fill(scoreBgColor(session.displaySleepScore))
+                                            .frame(width: 38, height: 38)
+                                        Text("\(session.displaySleepScore)")
+                                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                                            .foregroundColor(.white)
+                                    }
+                                    
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        HStack(spacing: 6) {
+                                            Text(session.formattedNightSummary)
+                                                .font(.subheadline)
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(.white)
+                                            
+                                            Image(systemName: "waveform.path.ecg")
+                                                .font(.system(size: 10))
+                                                .foregroundColor(.purple)
+                                        }
+                                        
+                                        HStack(spacing: 6) {
+                                            Text("\(session.formattedStartTime) → \(session.formattedEndTime)")
+                                                .font(.caption)
+                                                .foregroundColor(.gray)
+                                            Text("•")
+                                                .font(.caption)
+                                                .foregroundColor(.gray)
+                                            Text(session.sleepScoreVerdict)
+                                                .font(.caption2)
+                                                .foregroundColor(.gray.opacity(0.8))
                                         }
                                     }
+                                    
+                                    Spacer()
+                                    
+                                    Text(session.formattedDuration)
+                                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                                        .foregroundColor(session.durationHours >= session.targetDurationHours ? Color(red: 0.114, green: 0.725, blue: 0.329) : .white)
                                 }
                             }
-                            
-                            Spacer()
-                            
-                            Text(session.formattedDuration)
-                                .font(.system(size: 16, weight: .bold, design: .rounded))
-                                .foregroundColor(session.durationHours >= session.targetDurationHours ? Color(red: 0.114, green: 0.725, blue: 0.329) : .white)
+                            .buttonStyle(.plain)
                             
                             Button(action: {
                                 sleepService.deleteSession(id: session.id)
@@ -511,6 +590,7 @@ public struct SleepTrackerView: View {
                                 Image(systemName: "trash")
                                     .font(.system(size: 13))
                                     .foregroundColor(.gray.opacity(0.6))
+                                    .padding(.leading, 4)
                             }
                             .buttonStyle(.plain)
                         }
@@ -543,6 +623,15 @@ public struct SleepTrackerView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
+    }
+    
+    private func scoreBgColor(_ score: Int) -> Color {
+        switch score {
+        case 85...100: return Color(red: 0.114, green: 0.725, blue: 0.329).opacity(0.3)
+        case 75..<85:  return Color.blue.opacity(0.3)
+        case 65..<75:  return Color.orange.opacity(0.3)
+        default:       return Color.red.opacity(0.3)
+        }
     }
 }
 
@@ -598,3 +687,32 @@ public struct AddManualSleepView: View {
         .preferredColorScheme(.dark)
     }
 }
+
+// MARK: - Extension Couleur Hex
+
+fileprivate extension Color {
+    init(hex: String) {
+        let clean = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: clean).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch clean.count {
+        case 3:
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6:
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8:
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (1, 1, 1, 0)
+        }
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue: Double(b) / 255,
+            opacity: Double(a) / 255
+        )
+    }
+}
+

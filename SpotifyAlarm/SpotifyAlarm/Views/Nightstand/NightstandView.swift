@@ -9,9 +9,11 @@ public struct NightstandView: View {
     @State private var currentTime = Date()
     @State private var isDimmed = false
     @State private var triggeredAlarm: Alarm? = nil
+    @State private var isSmartAlarmTriggered = false
     
     private let timer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     @ObservedObject private var alarmService = AlarmService.shared
+    @ObservedObject private var analysisService = SleepAnalysisService.shared
     private let audioPlayerService = AudioPlayerService.shared
     private let spotifyAPIService = SpotifyAPIService.shared
     
@@ -65,6 +67,9 @@ public struct NightstandView: View {
                     Text(dateFormatter.string(from: currentTime).capitalized)
                         .font(.title3)
                         .foregroundColor(isDimmed ? .gray.opacity(0.3) : .gray)
+                    
+                    liveSleepHUD
+                        .padding(.top, 6)
                 }
                 
                 Spacer()
@@ -85,12 +90,21 @@ public struct NightstandView: View {
             // Empêche la mise en veille automatique tant que le mode chevet est affiché
             UIApplication.shared.isIdleTimerDisabled = true
             SleepService.shared.startSleepSession()
+            analysisService.startAnalysis()
         }
         .onDisappear {
             // Restaure la mise en veille standard
             UIApplication.shared.isIdleTimerDisabled = false
             audioPlayerService.stopAlarmSound()
-            _ = SleepService.shared.endSleepSession(quality: 4)
+            let results = analysisService.finishAnalysis()
+            _ = SleepService.shared.endSleepSession(
+                quality: 4,
+                stages: results.stages,
+                snoreMinutes: results.snoreMinutes,
+                snoreEpisodes: results.snoreEpisodes,
+                averageDB: results.averageDB,
+                calculatedScore: results.sleepScore
+            )
         }
         .onReceive(timer) { newTime in
             self.currentTime = newTime
@@ -116,10 +130,19 @@ public struct NightstandView: View {
             
             if let (alarm, _) = nextAlarm {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Prochain réveil à \(alarm.formattedTime)")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                    HStack(spacing: 6) {
+                        Text("Prochain réveil à \(alarm.formattedTime)")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                        
+                        if alarm.isSmartAlarmEnabled {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 11))
+                                .foregroundColor(.yellow)
+                        }
+                    }
+                    
                     Text(alarm.musicDescription)
                         .font(.caption)
                         .foregroundColor(.gray)
@@ -137,10 +160,70 @@ public struct NightstandView: View {
         .opacity(isDimmed ? 0.4 : 1.0)
     }
     
+    // MARK: - HUD de Sommeil en Direct
+    
+    private var liveSleepHUD: some View {
+        HStack(spacing: 12) {
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(Color(hex: analysisService.currentStage.colorHex))
+                    .frame(width: 8, height: 8)
+                Text(analysisService.currentStage.displayName)
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+            }
+            
+            Text("•")
+                .foregroundColor(.gray.opacity(0.5))
+            
+            HStack(spacing: 4) {
+                Image(systemName: "mic.fill")
+                    .font(.system(size: 9))
+                    .foregroundColor(.cyan)
+                Text("\(Int(analysisService.currentDecibels)) dB")
+                    .font(.caption2)
+                    .foregroundColor(.gray)
+            }
+            
+            if analysisService.currentSnoreMinutes > 0 {
+                Text("•")
+                    .foregroundColor(.gray.opacity(0.5))
+                HStack(spacing: 4) {
+                    Image(systemName: "waveform")
+                        .font(.system(size: 9))
+                        .foregroundColor(.orange)
+                    Text("\(analysisService.currentSnoreMinutes)m")
+                        .font(.caption2)
+                        .foregroundColor(.orange)
+                }
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 6)
+        .background(Color.white.opacity(0.08))
+        .cornerRadius(16)
+        .opacity(isDimmed ? 0.3 : 0.9)
+    }
+    
     // MARK: - Bannière de Sonnerie Active
     
     private func activeRingingBanner(for alarm: Alarm) -> some View {
         VStack(spacing: 16) {
+            if isSmartAlarmTriggered {
+                HStack(spacing: 6) {
+                    Image(systemName: "sparkles")
+                    Text("RÉVEIL INTELLIGENT • Sommeil Léger")
+                }
+                .font(.caption)
+                .fontWeight(.bold)
+                .foregroundColor(.black)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 4)
+                .background(Color.yellow)
+                .cornerRadius(12)
+            }
+            
             Text("⏰ IL EST L'HEURE !")
                 .font(.title2)
                 .fontWeight(.black)
@@ -157,6 +240,7 @@ public struct NightstandView: View {
                             spotifyAPIService.openSpotifyApp(uri: item.uri)
                         }
                         audioPlayerService.stopAlarmSound()
+                        isSmartAlarmTriggered = false
                     }) {
                         Text("🎵 Ouvrir Spotify")
                             .font(.headline)
@@ -171,6 +255,7 @@ public struct NightstandView: View {
                 Button(action: {
                     audioPlayerService.stopAlarmSound()
                     triggeredAlarm = nil
+                    isSmartAlarmTriggered = false
                 }) {
                     Text("Arrêter")
                         .font(.headline)
@@ -190,6 +275,12 @@ public struct NightstandView: View {
     // MARK: - Détection de Déclenchement
     
     private func checkAlarmTrigger(at date: Date) {
+        // 1. Vérification prioritaire du Réveil Intelligent (Smart Alarm)
+        if let smartAlarm = analysisService.checkSmartAlarmTrigger(alarms: alarmService.alarms, at: date) {
+            triggerAlarmNow(smartAlarm, isSmart: true)
+            return
+        }
+        
         let calendar = Calendar.current
         let currentHour = calendar.component(.hour, from: date)
         let currentMinute = calendar.component(.minute, from: date)
@@ -205,15 +296,16 @@ public struct NightstandView: View {
             if h == currentHour && m == currentMinute {
                 // Vérifier si répétition ou ponctuel
                 if alarm.repeatDays.isEmpty || (weekday != nil && alarm.repeatDays.contains(weekday!)) {
-                    triggerAlarmNow(alarm)
+                    triggerAlarmNow(alarm, isSmart: false)
                     break
                 }
             }
         }
     }
     
-    private func triggerAlarmNow(_ alarm: Alarm) {
-        triggeredAlarm = alarm
+    private func triggerAlarmNow(_ alarm: Alarm, isSmart: Bool = false) {
+        self.triggeredAlarm = alarm
+        self.isSmartAlarmTriggered = isSmart
         
         if let item = alarm.spotifyItem {
             // Uniquement la musique Spotify + pulsations cadencées
@@ -224,7 +316,6 @@ public struct NightstandView: View {
                     try await spotifyAPIService.triggerPlayback(item: item)
                 } catch {
                     print("Secours sonore activé car Spotify n'a pas pu démarrer: \(error.localizedDescription)")
-                    // Secours de sécurité : sonnerie carillon uniquement si Spotify échoue
                     audioPlayerService.playAlarmSound(
                         targetVolume: alarm.volume,
                         fadeInDuration: 2.0,
@@ -233,7 +324,6 @@ public struct NightstandView: View {
                 }
             }
         } else if let customFileName = alarm.customAudioFileName, !customFileName.isEmpty {
-            // Lecture du fichier MP3 personnalisé + vibrations synchronisées sur le rythme
             audioPlayerService.playCustomAudio(
                 fileName: customFileName,
                 targetVolume: alarm.volume,
@@ -241,7 +331,6 @@ public struct NightstandView: View {
                 vibrateOnBeat: alarm.vibrateOnBeat
             )
         } else {
-            // Pas de morceau choisi : sonnerie carillon standard + vibrations
             audioPlayerService.playAlarmSound(
                 targetVolume: alarm.volume,
                 fadeInDuration: 3.0,
@@ -263,5 +352,33 @@ public struct NightstandView: View {
         formatter.locale = Locale(identifier: "fr_FR")
         formatter.dateFormat = "EEEE d MMMM"
         return formatter
+    }
+}
+
+// MARK: - Extension Couleur Hex
+
+fileprivate extension Color {
+    init(hex: String) {
+        let clean = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: clean).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch clean.count {
+        case 3:
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6:
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8:
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (1, 1, 1, 0)
+        }
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue: Double(b) / 255,
+            opacity: Double(a) / 255
+        )
     }
 }

@@ -12,6 +12,8 @@ public struct Alarm: Identifiable, Codable, Equatable {
     public var vibrateOnBeat: Bool
     public var volume: Float
     public var isEnabled: Bool
+    public var isSmartAlarmEnabled: Bool
+    public var smartAlarmWindowMinutes: Int
     
     public init(
         id: UUID = UUID(),
@@ -23,7 +25,9 @@ public struct Alarm: Identifiable, Codable, Equatable {
         customAudioTitle: String? = nil,
         vibrateOnBeat: Bool = true,
         volume: Float = 0.8,
-        isEnabled: Bool = true
+        isEnabled: Bool = true,
+        isSmartAlarmEnabled: Bool = false,
+        smartAlarmWindowMinutes: Int = 30
     ) {
         self.id = id
         self.title = title
@@ -35,11 +39,14 @@ public struct Alarm: Identifiable, Codable, Equatable {
         self.vibrateOnBeat = vibrateOnBeat
         self.volume = max(0.0, min(1.0, volume))
         self.isEnabled = isEnabled
+        self.isSmartAlarmEnabled = isSmartAlarmEnabled
+        self.smartAlarmWindowMinutes = smartAlarmWindowMinutes
     }
     
     enum CodingKeys: String, CodingKey {
         case id, title, time, repeatDays, spotifyItem, volume, isEnabled
         case customAudioFileName, customAudioTitle, vibrateOnBeat
+        case isSmartAlarmEnabled, smartAlarmWindowMinutes
     }
     
     public init(from decoder: Decoder) throws {
@@ -54,6 +61,8 @@ public struct Alarm: Identifiable, Codable, Equatable {
         self.customAudioFileName = try container.decodeIfPresent(String.self, forKey: .customAudioFileName)
         self.customAudioTitle = try container.decodeIfPresent(String.self, forKey: .customAudioTitle)
         self.vibrateOnBeat = try container.decodeIfPresent(Bool.self, forKey: .vibrateOnBeat) ?? true
+        self.isSmartAlarmEnabled = try container.decodeIfPresent(Bool.self, forKey: .isSmartAlarmEnabled) ?? false
+        self.smartAlarmWindowMinutes = try container.decodeIfPresent(Int.self, forKey: .smartAlarmWindowMinutes) ?? 30
     }
     
     /// Heure formatée (ex: "07:00")

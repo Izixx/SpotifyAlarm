@@ -16,6 +16,8 @@ public final class AlarmEditViewModel: ObservableObject {
     @Published public var vibrateOnBeat: Bool
     @Published public var volume: Float
     @Published public var isEnabled: Bool
+    @Published public var isSmartAlarmEnabled: Bool
+    @Published public var smartAlarmWindowMinutes: Int
     
     @Published public var isSpotifyPickerPresented: Bool = false
     @Published public var isCustomAudioPickerPresented: Bool = false
@@ -35,6 +37,8 @@ public final class AlarmEditViewModel: ObservableObject {
             self.vibrateOnBeat = alarm.vibrateOnBeat
             self.volume = alarm.volume
             self.isEnabled = alarm.isEnabled
+            self.isSmartAlarmEnabled = alarm.isSmartAlarmEnabled
+            self.smartAlarmWindowMinutes = alarm.smartAlarmWindowMinutes
         } else {
             self.alarmId = UUID()
             self.isNew = true
@@ -53,6 +57,8 @@ public final class AlarmEditViewModel: ObservableObject {
             self.vibrateOnBeat = true
             self.volume = 0.8
             self.isEnabled = true
+            self.isSmartAlarmEnabled = false
+            self.smartAlarmWindowMinutes = 30
         }
     }
     
@@ -93,7 +99,9 @@ public final class AlarmEditViewModel: ObservableObject {
             customAudioTitle: customAudioTitle,
             vibrateOnBeat: vibrateOnBeat,
             volume: volume,
-            isEnabled: isEnabled
+            isEnabled: isEnabled,
+            isSmartAlarmEnabled: isSmartAlarmEnabled,
+            smartAlarmWindowMinutes: smartAlarmWindowMinutes
         )
         alarmService.saveAlarm(alarm)
     }

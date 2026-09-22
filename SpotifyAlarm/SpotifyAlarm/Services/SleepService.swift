@@ -91,17 +91,35 @@ public final class SleepService: ObservableObject {
         UserDefaults.standard.set(date, forKey: activeSessionKey)
     }
     
-    /// Clôture la session en cours et enregistre la nuit de sommeil
+    /// Clôture la session en cours et enregistre la nuit de sommeil avec ses données d'analyse
     @discardableResult
-    public func endSleepSession(at date: Date = Date(), quality: Int = 4, notes: String? = nil) -> SleepSession? {
+    public func endSleepSession(
+        at date: Date = Date(),
+        quality: Int = 4,
+        notes: String? = nil,
+        stages: [SleepStageEpoch] = [],
+        snoreMinutes: Int = 0,
+        snoreEpisodes: Int = 0,
+        averageDB: Double = 32.0,
+        calculatedScore: Int = 0
+    ) -> SleepSession? {
         guard let start = activeSessionStart else { return nil }
+        
+        // Si aucune époque n'a été fournie (ex: arrêt direct sans capteurs), on synthétise un cycle cohérent
+        let finalStages = stages.isEmpty ? generateSimulatedEpochs(start: start, end: date) : stages
+        let score = calculatedScore > 0 ? calculatedScore : 82
         
         let session = SleepSession(
             startDate: start,
             endDate: date,
             targetDurationHours: targetSleepHours,
             qualityRating: quality,
-            notes: notes
+            notes: notes,
+            stages: finalStages,
+            snoreDurationMinutes: snoreMinutes,
+            snoreEpisodesCount: snoreEpisodes,
+            averageSoundDB: averageDB,
+            calculatedSleepScore: score
         )
         
         // On n'enregistre que si la session a duré au moins 10 minutes pour éviter les faux déclenchements
@@ -125,15 +143,21 @@ public final class SleepService: ObservableObject {
     
     // MARK: - Gestion Manuelle
     
-    /// Ajoute manuellement une nuit passée
+    /// Ajoute manuellement une nuit passée avec synthèse de cycle de sommeil
     public func addManualSession(startDate: Date, endDate: Date, quality: Int = 4, notes: String? = nil) {
         guard endDate > startDate else { return }
+        let simulatedStages = generateSimulatedEpochs(start: startDate, end: endDate)
         let session = SleepSession(
             startDate: startDate,
             endDate: endDate,
             targetDurationHours: targetSleepHours,
             qualityRating: quality,
-            notes: notes
+            notes: notes,
+            stages: simulatedStages,
+            snoreDurationMinutes: 0,
+            snoreEpisodesCount: 0,
+            averageSoundDB: 30.0,
+            calculatedSleepScore: quality * 20
         )
         sessions.append(session)
         sessions.sort(by: { $0.startDate > $1.startDate })
@@ -143,7 +167,7 @@ public final class SleepService: ObservableObject {
     
     /// Supprime une session enregistrée
     public func deleteSession(id: UUID) {
-        sessions.removeAll(where: { $0.id == id })
+        sessions.removeAll { $0.id == id }
         saveToDisk()
         refreshStats()
     }
@@ -184,6 +208,15 @@ public final class SleepService: ObservableObject {
         // 6. Barres hebdomadaires (7 derniers jours)
         let weeklyBars = buildWeeklyBars()
         
+        // 7. Moyenne des scores de sommeil
+        let avgScore = Int(recent.map { Double($0.displaySleepScore) }.reduce(0.0, +) / Double(recent.count))
+        
+        // 8. Moyenne de sommeil profond
+        let avgDeep = recent.map { $0.deepSleepPercentage }.reduce(0.0, +) / Double(recent.count)
+        
+        // 9. Total des ronflements
+        let totalSnores = recent.map { $0.snoreDurationMinutes }.reduce(0, +)
+        
         self.stats = SleepStats(
             averageDurationSeconds: avgDurationSeconds,
             averageDurationHours: avgDurationHours,
@@ -193,7 +226,10 @@ public final class SleepService: ObservableObject {
             sleepDebtHours: debt,
             regularityScore: regularity,
             totalNightsTracked: sessions.count,
-            weeklyBars: weeklyBars
+            weeklyBars: weeklyBars,
+            averageSleepScore: avgScore,
+            averageDeepSleepPercentage: avgDeep,
+            totalSnoreMinutes: totalSnores
         )
     }
     
@@ -235,7 +271,6 @@ public final class SleepService: ObservableObject {
         let variance = wakeMinutes.map { pow($0 - mean, 2) }.reduce(0, +) / Double(wakeMinutes.count)
         let standardDeviation = sqrt(variance) // en minutes
         
-        // Si écart-type < 30min -> score > 90%
         let score = max(40, min(100, Int(100.0 - (standardDeviation * 0.6))))
         return score
     }
@@ -250,7 +285,6 @@ public final class SleepService: ObservableObject {
             let weekday = calendar.component(.weekday, from: dayDate) // 1 = Dimanche
             let label = dayNames[(weekday - 1) % 7]
             
-            // Trouver la session correspondant à cette nuit
             let match = sessions.first { s in
                 calendar.isDate(s.endDate, inSameDayAs: dayDate)
             }
@@ -268,9 +302,7 @@ public final class SleepService: ObservableObject {
     
     // MARK: - Calculateur de Cycles de Sommeil (90 min)
     
-    /// Calcule les suggestions de réveil basées sur les cycles de 90 minutes
     public func calculateCircadianCycles(bedtime: Date = Date()) -> [SleepCycleSuggestion] {
-        // En moyenne 14 minutes pour s'endormir
         let fallAsleepTime = bedtime.addingTimeInterval(14 * 60)
         let cycleDuration: TimeInterval = 90 * 60 // 1h30
         
@@ -278,7 +310,6 @@ public final class SleepService: ObservableObject {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         
-        // Cycles de 3 à 6 (4h30 à 9h de sommeil)
         for count in 3...6 {
             let wakeDate = fallAsleepTime.addingTimeInterval(Double(count) * cycleDuration)
             let totalHours = (Double(count) * 90) / 60.0
@@ -291,10 +322,54 @@ public final class SleepService: ObservableObject {
                 wakeUpTime: wakeDate,
                 formattedTime: formatter.string(from: wakeDate),
                 totalSleepFormatted: formattedSleep,
-                isRecommended: count == 5 // 5 cycles = 7h30 (idéal recommandé)
+                isRecommended: count == 5
             ))
         }
         return suggestions
+    }
+    
+    // MARK: - Générateur d'Hypnogramme Réaliste
+    
+    /// Génère des époques de sommeil physiologiquement crédibles réparties en cycles de 90 minutes
+    public func generateSimulatedEpochs(start: Date, end: Date) -> [SleepStageEpoch] {
+        var epochs: [SleepStageEpoch] = []
+        let stepMinutes: Double = 5.0
+        var current = start
+        var elapsed: Double = 0
+        let totalDurationMinutes = end.timeIntervalSince(start) / 60.0
+        
+        while current <= end {
+            let cyclePos = elapsed.truncatingRemainder(dividingBy: 90.0)
+            var stage: SleepStage = .light
+            
+            if elapsed < 15.0 {
+                stage = .awake
+            } else if elapsed > totalDurationMinutes - 10.0 {
+                stage = .light
+            } else if cyclePos >= 20.0 && cyclePos < 60.0 {
+                stage = .deep
+            } else if cyclePos >= 60.0 && cyclePos < 80.0 {
+                stage = .rem
+            } else {
+                stage = .light
+            }
+            
+            // Micro-réveil aléatoire rare au milieu de la nuit
+            if elapsed > 180.0 && elapsed < 185.0 {
+                stage = .awake
+            }
+            
+            epochs.append(SleepStageEpoch(
+                timestamp: current,
+                stage: stage,
+                soundLevelDB: stage == .deep ? 26.0 : (stage == .rem ? 34.0 : 38.0),
+                motionIntensity: stage == .awake ? 0.2 : (stage == .light ? 0.05 : 0.01)
+            ))
+            
+            current = current.addingTimeInterval(stepMinutes * 60)
+            elapsed += stepMinutes
+        }
+        return epochs
     }
     
     // MARK: - Données Initiales de Démonstration
@@ -303,29 +378,35 @@ public final class SleepService: ObservableObject {
         let calendar = Calendar.current
         var list: [SleepSession] = []
         
-        // Génère 5 nuits réalistes pour que le graphique et les moyennes soient parlants dès le départ
-        let sampleDurations: [(hours: Int, minutes: Int, quality: Int)] = [
-            (7, 45, 5),
-            (8, 10, 4),
-            (7, 20, 3),
-            (8, 00, 5),
-            (7, 35, 4)
+        let sampleConfigs: [(hours: Int, minutes: Int, quality: Int, score: Int, snores: Int)] = [
+            (7, 45, 5, 88, 12),
+            (8, 10, 4, 84, 0),
+            (7, 15, 3, 72, 28),
+            (8, 00, 5, 91, 5),
+            (7, 30, 4, 82, 10)
         ]
         
-        for (index, sample) in sampleDurations.enumerated() {
+        for (index, config) in sampleConfigs.enumerated() {
             guard let day = calendar.date(byAdding: .day, value: -(index + 1), to: Date()) else { continue }
             var bedComps = calendar.dateComponents([.year, .month, .day], from: day)
             bedComps.hour = 23
             bedComps.minute = 15 + (index * 5)
             guard let start = calendar.date(from: bedComps) else { continue }
-            let end = start.addingTimeInterval(Double(sample.hours * 3600 + sample.minutes * 60))
+            let end = start.addingTimeInterval(Double(config.hours * 3600 + config.minutes * 60))
+            
+            let sampleEpochs = generateSimulatedEpochs(start: start, end: end)
             
             list.append(SleepSession(
                 startDate: start,
                 endDate: end,
                 targetDurationHours: 8.0,
-                qualityRating: sample.quality,
-                notes: nil
+                qualityRating: config.quality,
+                notes: nil,
+                stages: sampleEpochs,
+                snoreDurationMinutes: config.snores,
+                snoreEpisodesCount: config.snores > 0 ? (config.snores / 4) : 0,
+                averageSoundDB: config.snores > 15 ? 42.0 : 31.0,
+                calculatedSleepScore: config.score
             ))
         }
         return list

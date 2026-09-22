@@ -41,6 +41,8 @@
 		7B3300223344556677889905 /* SleepSoundsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3300223344556677889906 /* SleepSoundsService.swift */; };
 		7B4400223344556677889907 /* SleepTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4400223344556677889908 /* SleepTrackerView.swift */; };
 		7B6600223344556677889910 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6600223344556677889911 /* MainTabView.swift */; };
+		7B7700223344556677889912 /* SleepAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B7700223344556677889913 /* SleepAnalysisService.swift */; };
+		7B8800223344556677889914 /* HypnogramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8800223344556677889915 /* HypnogramView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +81,8 @@
 		7B3300223344556677889906 /* SleepSoundsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SleepSoundsService.swift"; sourceTree = "<group>"; };
 		7B4400223344556677889908 /* SleepTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SleepTrackerView.swift"; sourceTree = "<group>"; };
 		7B6600223344556677889911 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainTabView.swift"; sourceTree = "<group>"; };
+		7B7700223344556677889913 /* SleepAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SleepAnalysisService.swift"; sourceTree = "<group>"; };
+		7B8800223344556677889915 /* HypnogramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HypnogramView.swift"; sourceTree = "<group>"; };
 		2EBD987849E09EFAF7E2AB55 /* SpotifyAlarm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpotifyAlarm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -147,6 +151,7 @@
 				7A1100223344556677889902 /* CustomAudioService.swift */,
 				7B2200223344556677889904 /* SleepService.swift */,
 				7B3300223344556677889906 /* SleepSoundsService.swift */,
+				7B7700223344556677889913 /* SleepAnalysisService.swift */,
 			);
 			path = SpotifyAlarm/Services;
 			sourceTree = "<group>";
@@ -233,6 +238,7 @@
 			isa = PBXGroup;
 			children = (
 				7B4400223344556677889908 /* SleepTrackerView.swift */,
+				7B8800223344556677889915 /* HypnogramView.swift */,
 			);
 			path = Sleep;
 			sourceTree = "<group>";
@@ -358,6 +364,8 @@
 				7B3300223344556677889905 /* SleepSoundsService.swift in Sources */,
 				7B4400223344556677889907 /* SleepTrackerView.swift in Sources */,
 				7B6600223344556677889910 /* MainTabView.swift in Sources */,
+				7B7700223344556677889912 /* SleepAnalysisService.swift in Sources */,
+				7B8800223344556677889914 /* HypnogramView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
